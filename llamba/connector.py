@@ -16,6 +16,7 @@ class LlambaConnector:
         self.chat_model = chat_model
         self.answer = ""
         self.clock = ""
+        self.condition = ""
         self.language = kwargs.get('language', "en")
         self.document_repo = None
 
@@ -57,9 +58,11 @@ class LlambaConnector:
         return disease_prompt
     
     def produce_recommendations_prompt(self):
-        return f"Given the analysis results that will follow, what would you recommend to normalize the results and lower the chance of disease occurrence? \
-            Take into account that the person has worked in {self.condition.name} for {self.condition.duration}. \
-            Explain each recommendation in detail. \n The analysis: {self.answer}"
+        prompt = "Given the analysis results that will follow, what would you recommend to normalize the results and lower the chance of disease occurrence?"
+        if self.condition:
+            prompt += f"Take into account that the person has worked in {self.condition.name} for {self.condition.duration}."
+        prompt += f"Explain each recommendation in detail. Provide the answer in {self.language}. \n The analysis: {self.answer}"
+        return prompt
     
     # Answer construction
     def produce_basic_answer(self):
